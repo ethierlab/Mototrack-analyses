@@ -1,7 +1,18 @@
 function t2s = success_times(bindata,varargin)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % returns trial times for successful trials of each type ("no_reward", "single", or "jackpot")
+% usage: t2s = success_times(bindata,[plot_flag])
+%
+% input args:
+%       bindata         : binned data extracted with Michaël's mysterious function
+%       plot_flag       : [optional] default = 1. Set to 0 to avoid also producing histograms and edcf plots
+%
+% output args:
+%       t2s             : cell array of time to success for each trial type, in this order: {no_reward, single, jackpot}
+%
+%%%%%% EthierLab - 03/2019 - CE %%%%%%%%%%%%%%%%%
 
-plot_flag = 0;
+plot_flag = 1;
 types_id = [-1,0,1];
 types_labels = {'no reward', 'single', 'jackpot'};
 type_colors = {'k','b','r'};
