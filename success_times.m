@@ -13,17 +13,19 @@ function t2s = success_times(bindata,varargin)
 %%%%%% EthierLab - 03/2019 - CE %%%%%%%%%%%%%%%%%
 
 plot_flag = 1;
-types_id = [-1,0,1];
+if nargin>1
+    plot_flag = varargin{1};
+end
+
+types_id     = [-1,0,1];
+num_types    = numel(types_id);
 types_labels = {'no reward', 'single', 'jackpot'};
 type_colors = {'k','b','r'};
 
-if nargin>1
-    plot_flag = varargin{1};
-    %     if nargin >2
-    %         types_id = varargin{2}; %pass types_id as an input arg? not for now...
-    %     end
-end
-num_types = numel(types_id);
+folder_idx = strfind(bindata.data_folder,'\');
+folder_str = bindata.data_folder(folder_idx(end)+1:end);
+data_info = [bindata.animal_name ' (HT=' num2str(bindata.hold_time*1000) 'ms, FT=' num2str(bindata.threshold) 'g, ' folder_str ')'];
+data_info = strrep(data_info,'_','\_');
 
 % to store time 2 success in that order: {no_reward, single, jackpot}
 t2s = cell(1,num_types);
@@ -51,10 +53,6 @@ if plot_flag
         histogram(t2s{i},edges,'Normalization', 'probability','FaceColor',type_colors{i},'FaceAlpha',0.3);
     end
     xlabel('Reward time after trial onset (s)'); ylabel('proportion of successful trials');
-    folder_idx = strfind(bindata.data_folder,'\');
-    folder_str = bindata.data_folder(folder_idx(end)+1:end);
-    data_info = [bindata.animal_name ' (HT=' num2str(bindata.hold_time*1000) 'ms, FT=' num2str(bindata.threshold) 'g, ' folder_str ')'];
-    data_info = strrep(data_info,'_','\_');
     title(sprintf('Time to success per trial type\n%s',data_info))
     legend(sprintf('no reward (n=%d)',Ns(1)),sprintf('single (n=%d)',Ns(2)),sprintf('jackpot (n=%d)',Ns(3)));
     pretty_fig;
@@ -105,6 +103,6 @@ if plot_flag
     pretty_fig;
     legend(lh,sprintf('no reward (n=%d)',Ns(1)),sprintf('single (n=%d)',Ns(2)),sprintf('jackpot (n=%d)',Ns(3)),'Location','NorthWest');
     title(sprintf('Cummulative distribution of time to success (with CI)\n%s',data_info));
-    ylabel('ECDF'); xlabel('Reward time after trial onset (s)');
+    ylabel('Cummulative fraction of successful trials'); xlabel('Reward time after trial onset (s)');
     
 end
