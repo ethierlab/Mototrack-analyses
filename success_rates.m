@@ -64,7 +64,7 @@ figure; hold on;
 % error bar: 1.96*SE accross sessions
 Err = cellfun(@(x) 1.96*std(x(~isnan(x)))/sqrt(length(x(~isnan(x)))),sr_sess);
 for ttype = 1:num_types
-    h = barwitherr(Err(ttype), ttype, sr_all(ttype));
+    barwitherr(Err(ttype), ttype, sr_all(ttype));
     hold on;
     dat = get(gca,'Children');
     bars = dat(2);

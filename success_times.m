@@ -40,22 +40,23 @@ for ttype = 1:num_types
 end
 
 % number of successes:
-Ns = cellfun(@length,t2s);
+N = cellfun(@length,t2s);
 
 % plot if wanted
 if plot_flag
-    
-    % plot distribution histograms on top of each other
-    figure;
-    hold on;
-    edges = [0:0.1:6];
-    for i=1:num_types
-        histogram(t2s{i},edges,'Normalization', 'probability','FaceColor',type_colors{i},'FaceAlpha',0.3);
-    end
-    xlabel('Reward time after trial onset (s)'); ylabel('proportion of successful trials');
-    title(sprintf('Time to success per trial type\n%s',data_info))
-    legend(sprintf('no reward (n=%d)',Ns(1)),sprintf('single (n=%d)',Ns(2)),sprintf('jackpot (n=%d)',Ns(3)));
-    pretty_fig;
+
+    edges = 0:0.1:6;
+         
+%     % plot distribution histograms on top of each other
+%     figure;
+%     hold on;
+%     for i=1:num_types
+%         histogram(t2s{i},edges,'Normalization', 'probability','FaceColor',type_colors{i},'FaceAlpha',0.3);
+%     end
+%     xlabel('Reward time after trial onset (s)'); ylabel('proportion of successful trials');
+%     title(sprintf('Time to success per trial type\n%s',data_info))
+%     legend(sprintf('no reward (n=%d)',Ns(1)),sprintf('single (n=%d)',Ns(2)),sprintf('jackpot (n=%d)',Ns(3)));
+%     pretty_fig;
     
     % plot distribution histograms in 3 different subplots
     figure;
@@ -65,7 +66,7 @@ if plot_flag
         
         histogram(t2s{i},edges,'Normalization', 'probability','FaceColor',type_colors{i});
         ylabel('proportion of successful trials');
-        legend(sprintf([types_labels{i} ' (n=%d)'],Ns(i)));
+        legend(sprintf([types_labels{i} ' (n=%d)'],N(i)));
         if i==1
             title(sprintf('Time to success per trial type\n%s',data_info));
         end
@@ -101,8 +102,34 @@ if plot_flag
     end
     xlim([0 6]);
     pretty_fig;
-    legend(lh,sprintf('no reward (n=%d)',Ns(1)),sprintf('single (n=%d)',Ns(2)),sprintf('jackpot (n=%d)',Ns(3)),'Location','NorthWest');
+    legend(lh,sprintf('no reward (n=%d)',N(1)),sprintf('single (n=%d)',N(2)),sprintf('jackpot (n=%d)',N(3)),'Location','NorthWest');
     title(sprintf('Cummulative distribution of time to success (with CI)\n%s',data_info));
     ylabel('Cummulative fraction of successful trials'); xlabel('Reward time after trial onset (s)');
+    
+    
+    % plot bar plot
+    
+    figure;
+    % error bar: 1.96*SE
+    Err = cellfun(@(x) 1.96*std(x(~isnan(x)))/sqrt(length(x(~isnan(x)))),t2s);
+    
+    for ttype = 1:num_types
+        barwitherr(Err(ttype), ttype, mean(t2s{ttype}));
+        hold on;
+        dat = get(gca,'Children');
+        bars = dat(2);
+        set(bars,'FaceColor',type_colors{ttype});
+    end
+    
+    set(gca,'XTick',1:num_types);
+    xtl = get(gca,'XTickLabel');
+    for ttype = 1:num_types
+        xtl{ttype} = sprintf([types_labels{ttype} ' (n=%d)'],N(ttype));
+    end
+    set(gca,'XTickLabel',xtl);
+    
+    ylabel('Time to success');
+    title(sprintf('Time to success for all trials (1.96*SE)\n%s',data_info));
+    pretty_fig;
     
 end
