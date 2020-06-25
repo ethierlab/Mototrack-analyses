@@ -37,22 +37,40 @@ sessions = unique(datatable.session_index);
 w = linspace(0,2/(n_trials+1),n_trials+1);
 w = w(2:end); % linear weigths for > importance of recent trials. sum of weigths = 1;
 
+% a = 1;
+
 for s = 1:length(sessions)
    
-    
     trials_idx = find(datatable.session_index == sessions(s));
+
+%     SR_temp = filtfilt(w,a,datatable.successful_bin(trials_idx));
     
+
+
     if length(trials_idx) < n_trials+1
         continue    %skip session if not enough trials
     end
     
     for t = trials_idx(n_trials+1):trials_idx(end)
+        
         if ~consider_NR
             w_temp = w.*(datatable.jackpot_bin(t-n_trials:t-1)>=0)'; % weight of 0 for NR trials, regardless of outcome
+
         else
             w_temp = w;
         end
         SR(t) = w_temp * datatable.successful_bin(t-n_trials:t-1);
     end
 end
+%     
+% for t = 1:length(trials_idx)
+%     f_sz  = max(t,n_trials);
+%     if ~consider_NR
+%             w_temp = w((end-f_sz):end).*(datatable.jackpot_bin(t-n_trials:t-1)>=0)'; % weight of 0 for NR trials, regardless of outcome
+% 
+%         else
+% %             w_temp = w;
+%         end
+%         SR(t) = w_temp * datatable.successful_bin(t-n_trials:t-1);
+%     end
     
